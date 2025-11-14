@@ -1,42 +1,55 @@
 # BookShop Library Management System
 
-A full-stack application for managing a hybrid bookshop and library. It provides the following features:
+A full-stack application for managing a hybrid bookshop and library, built with Python FastAPI, React, and MS SQL Server.
 
-- Library rental management
-- E-commerce book sales
-- Advanced analytics and statistics
-- Inventory tracking
+## 🚀 Features
 
-## Project Structure
+- **Library Management**: Track book/movie/game rentals
+- **E-commerce**: Purchase items directly
+- **Analytics Dashboard**: Statistical analysis of inventory and pricing
+- **RESTful API**: FastAPI backend with automatic documentation
+- **MS SQL Server**: Robust database with complex relationships
 
-The project is divided into the following directories:
+## 🛠️ Tech Stack
 
-- `backend`: Contains the backend server code written in Python using FastAPI and MS SQL Server for the database.
-- `frontend`: Contains the frontend code written in React and TypeScript.
-- [database](cci:1://file:///c:/Users/PC/bookshop-library/backend/setup_database.py:2:0-34:20): Contains the SQL scripts for creating the database schema.
+- **Backend**: Python FastAPI
+- **Database**: MS SQL Server (Docker)
+- **Frontend**: React + TypeScript (Coming soon)
+- **ORM**: pymssql
+- **Deployment**: Docker containerization
 
-## Setup Instructions
+## 📊 Database Schema
 
-### Backend Setup
+The system manages:
+- Items (books, movies, games, magazines)
+- Users and membership tiers
+- Transactions (purchases and rentals)
+- Inventory analytics and pricing statistics
 
-1. Install the required dependencies by running `pip install -r backend/requirements.txt`.
-2. Create a database named `BookShopLibrary` on your MS SQL Server.
-3. Update the database connection details in [backend/app/main.py](cci:7://file:///c:/Users/PC/bookshop-library/backend/app/main.py:0:0-0:0) with your own server details.
-4. Run the backend server using `uvicorn main:app --reload`.
+## 🚀 Getting Started
 
-### Frontend Setup
+### Prerequisites
+- Python 3.8+
+- Docker
+- MS SQL Server (via Docker)
 
-1. Install the required dependencies by running `npm install` in the `frontend` directory.
-2. Start the frontend development server using `npm start`.
+### Installation
+1. Clone the repository
+2. Set up the database: `cd backend && python setup_database.py`
+3. Start the API: `uvicorn app.main:app --reload`
+4. Access the API at `http://localhost:8000`
 
-## API Documentation
+## 📈 API Endpoints
 
-The backend API is documented using Swagger UI. You can access it at `http://localhost:8000/docs`.
+- `GET /` - API documentation
+- `GET /items` - Browse available items
+- `GET /analytics/pricing` - Pricing statistics
+- `GET /analytics/inventory` - Inventory analytics
+- Interactive docs: `http://localhost:8000/docs`
 
-## Database Schema
+## 🔮 Future Enhancements
 
-The database schema is defined in the [database/simple_schema.sql](cci:7://file:///c:/Users/PC/bookshop-library/database/simple_schema.sql:0:0-0:0) file. You can run this script to create the tables in the `BookShopLibrary` database.
-
-## Contributing
-
-Contributions are welcome! Please follow the guidelines in the [CONTRIBUTING.md](CONTRIBUTING.md) file.
+- React frontend dashboard
+- Advanced statistical modeling
+- User authentication
+- Payment integration
