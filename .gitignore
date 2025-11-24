@@ -24,3 +24,10 @@ yarn-error.log*
 # OS
 .DS_Store
 Thumbs.db
+
+# Development script files
+backend.log
+frontend.log
+backend.pid
+frontend.pid
+.requirements_installed
