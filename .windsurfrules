@@ -1,0 +1,25 @@
+# Project Overview
+- This is the BookShop Library Management System, a full-stack application.
+- The frontend is built with React and TypeScript. Use functional components with TypeScript interfaces.
+- The backend is a Python FastAPI server.
+- We use Tailwind CSS for all styling on the frontend.
+
+# Project Structure & Architecture
+- Frontend source code is located in the `frontend/src/` directory.
+- Key React components are in `frontend/src/pages/` (like CustomerPanel) and `frontend/src/components/`.
+- Backend application logic is in the `backend/app/` directory.
+- Database schema and scripts are in the `database/` directory.
+
+# Styling & UI Conventions
+- Use Tailwind CSS for all styling. Follow the existing dark theme pattern.
+- Prefer responsive design utilities from Tailwind (e.g., `flex`, `grid`, `md:` prefixes).
+
+# Data Fetching & State
+- The frontend uses native Fetch API for calls to `http://localhost:8000`.
+- Follow the data fetching patterns found in `CustomerPanel.tsx` and `services/api.ts`.
+
+# General Code Style
+- Use TypeScript for all frontend code. Avoid `any`; use explicit types.
+- Use descriptive variable names (e.g., `isLoading`, `searchTerm`).
+- Use named exports for React components and utility functions.
+- For Python backend code, use type hints and follow PEP8.

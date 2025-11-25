@@ -1,38 +1,49 @@
-.App {
-  text-align: center;
+/* Modern Dark Theme Styles */
+.bg-dots-pattern {
+  @apply bg-gray-900;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.08) 1px, transparent 0);
+  background-size: 20px 20px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Line clamping utilities */
+.line-clamp-1 {
+  @apply overflow-hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.line-clamp-2 {
+  @apply overflow-hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+/* Smooth transitions for all interactive elements */
+* {
+  @apply transition-colors duration-150 ease-in-out;
+  transition-property: transform, opacity;
 }
 
-.App-link {
-  color: #61dafb;
+/* Focus states for accessibility */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
 }
 
-@keyframes App-logo-spin {
+/* Loading animation */
+@keyframes spin-slow {
   from {
     transform: rotate(0deg);
   }
   to {
     transform: rotate(360deg);
   }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 3s linear infinite;
 }
