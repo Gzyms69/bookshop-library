@@ -3,7 +3,8 @@ import { BookIcon, FilterIcon, SearchIcon } from '../components/icons';
 import { ItemGrid } from '../components/ItemGrid';
 import { SearchFilters } from '../components/SearchFilters';
 import { AppNavigation } from '../components/AppNavigation';
-import { Item, getItems } from '../services/api';
+import { getItems } from '../services/api';
+import type { Item } from '../types';
 
 const CustomerPanel: React.FC = () => {
   console.log('🎬 CustomerPanel rendered');
@@ -17,7 +18,6 @@ const CustomerPanel: React.FC = () => {
 
   // Guard against StrictMode double-mount in development
   const didFetchRef = useRef(false);
-  const controllerRef = useRef<AbortController | null>(null);
 
   const fetchItems = async (signal?: AbortSignal) => {
     try {

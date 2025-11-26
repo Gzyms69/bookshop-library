@@ -33,25 +33,25 @@ export const ItemCard: React.FC<ItemCardProps> = React.memo(function ItemCard({ 
   };
 
   const getTypeColor = (typeId: number | undefined) => {
-  const colorMap = {
-    1: 'text-cyan-500 bg-cyan-500/20 border-cyan-500/30',
-    2: 'text-lime-500 bg-lime-500/20 border-lime-500/30',
-    3: 'text-fuchsia-500 bg-fuchsia-500/20 border-fuchsia-500/30',
-    4: 'text-amber-500 bg-amber-500/20 border-amber-500/30',
-    default: 'text-gray-400 bg-gray-500/10 border-gray-500/20'
-  };
+    const colorMap = {
+      1: 'text-cyan-500 bg-cyan-500/20 border-cyan-500/30',
+      2: 'text-lime-500 bg-lime-500/20 border-lime-500/30',
+      3: 'text-fuchsia-500 bg-fuchsia-500/20 border-fuchsia-500/30',
+      4: 'text-amber-500 bg-amber-500/20 border-amber-500/30',
+      default: 'text-gray-400 bg-gray-500/10 border-gray-500/20'
+    };
 
-  const result = typeId ? colorMap[typeId as keyof typeof colorMap] || colorMap.default : colorMap.default;
-  
-  debugLogger.log('STYLES:ItemCard_Generation', {
-    typeId,
-    typeName: getItemTypeName(typeId),
-    generatedClasses: result,
-    itemId: item.item_id
-  });
-  
-  return result;
-};
+    const result = typeId ? colorMap[typeId as keyof typeof colorMap] || colorMap.default : colorMap.default;
+    
+    debugLogger.log('STYLES:ItemCard_Generation', {
+      typeId,
+      typeName: getItemTypeName(typeId),
+      generatedClasses: result,
+      itemId: item.item_id
+    });
+    
+    return result;
+  };
 
   useEffect(() => {
     // Only log when the item ID changes (not on every render)
@@ -98,6 +98,7 @@ export const ItemCard: React.FC<ItemCardProps> = React.memo(function ItemCard({ 
         clearTimeout(styleTimeoutRef.current);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item]);
 
   const isAvailable = (item.available_copies || 0) > 0;

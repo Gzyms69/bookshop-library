@@ -195,6 +195,39 @@ curl http://localhost:8000/analytics/pricing
 - Use the admin panel for inventory management testing
 - Verify frontend-backend integration at http://localhost:3000
 
+## 🐞 Frontend Debugging & Dev Workflow
+
+### Debug Panel & Logger
+- A floating **Debug** button in the bottom-right opens the in-app debug panel.
+- Inside the panel you can:
+  - Toggle live output between **Console** and **Silent** (no console spam, logs still collected).
+  - Dump all collected logs to the browser console in a structured view.
+  - Export logs as **JSON** or **TXT** for sharing or offline inspection.
+  - Clear logs without reloading the app.
+
+You can also call the global logger from the browser console:
+
+```js
+window.debugLogger.log('CUSTOM:Example', { message: 'Hello from console' });
+```
+
+### Recommended Dev Workflow (WSL + Windows)
+- Run `./dev.sh start` once from WSL to start SQL Server, backend, and the React dev server.
+- Open the project in VS Code using the **Remote - WSL** extension (`code .` from WSL) so file changes are visible to the dev server.
+- Edit `.tsx` / `.ts` files and let the dev server hot-reload the browser; only use `./dev.sh restart` if the environment gets stuck.
+
+## 🧩 Admin API Stubs
+
+The frontend already exposes typed helpers for future admin operations in `src/services/api.ts`:
+
+- `getAdminItems(signal?: AbortSignal): Promise<Item[]>`
+- `createItem(payload: AdminItemCreatePayload): Promise<Item>`
+- `updateItem(id: number, payload: AdminItemUpdatePayload): Promise<Item>`
+- `deleteItem(id: number): Promise<void>`
+
+These functions are **stubs** and currently throw a `"Admin API ... not implemented yet"` error on call.  
+They exist so the admin UI can be wired and type-checked before the backend admin endpoints are available.
+
 ## 📈 API Endpoints
 
 | Method | Endpoint | Description |

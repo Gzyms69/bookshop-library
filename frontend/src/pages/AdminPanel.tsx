@@ -1,5 +1,6 @@
 import React from 'react';
 import { AppNavigation } from '../components/AppNavigation';
+import { AdminInventory } from '../components/AdminInventory';
 
 const AdminPanel: React.FC = () => {
   return (
@@ -20,13 +21,7 @@ const AdminPanel: React.FC = () => {
         </header>
 
         <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-gray-800/70 border border-gray-700 rounded-2xl p-6">
-            <p className="text-sm text-gray-400 mb-2">Next Steps</p>
-            <h2 className="text-xl font-semibold text-gray-100 mb-2">Inventory</h2>
-            <p className="text-gray-400 text-sm">
-              Upcoming work: CRUD interface, bulk adjustments, and type filters.
-            </p>
-          </div>
+          <AdminInventory />
           <div className="bg-gray-800/70 border border-gray-700 rounded-2xl p-6">
             <p className="text-sm text-gray-400 mb-2">Next Steps</p>
             <h2 className="text-xl font-semibold text-gray-100 mb-2">Members & Rentals</h2>

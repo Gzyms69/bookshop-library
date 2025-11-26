@@ -1,18 +1,9 @@
 import debugLogger from '../utils/debugLogger';
-
-export interface Item {
-  item_id: number;
-  title: string;
-  author_director?: string;
-  item_type_id?: number;
-  purchase_price?: number;
-  rental_price_per_day?: number;
-  total_copies?: number;
-  available_copies?: number;
-  created_date?: string;
-  last_updated?: string;
-  type_name?: string; // If your backend provides this
-}
+import {
+  Item,
+  AdminItemCreatePayload,
+  AdminItemUpdatePayload,
+} from '../types';
 
 export interface Analytics {
   purchase_prices: {
@@ -119,6 +110,29 @@ export const getPricingAnalytics = async (): Promise<Analytics> => {
     throw new Error('Failed to fetch analytics');
   }
   return response.json();
+};
+
+/**
+ * Admin API stubs
+ * These are intentionally unimplemented and will be wired to real backend endpoints later.
+ */
+export const getAdminItems = async (_signal?: AbortSignal): Promise<Item[]> => {
+  throw new Error('Admin API getAdminItems not implemented yet');
+};
+
+export const createItem = async (_payload: AdminItemCreatePayload): Promise<Item> => {
+  throw new Error('Admin API createItem not implemented yet');
+};
+
+export const updateItem = async (
+  _id: number,
+  _payload: AdminItemUpdatePayload,
+): Promise<Item> => {
+  throw new Error('Admin API updateItem not implemented yet');
+};
+
+export const deleteItem = async (_id: number): Promise<void> => {
+  throw new Error('Admin API deleteItem not implemented yet');
 };
 
 export const getInventoryAnalytics = async (): Promise<any> => {

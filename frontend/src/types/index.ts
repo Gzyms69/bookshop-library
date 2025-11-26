@@ -16,3 +16,18 @@ export interface ItemType {
   type_name: string;
   description?: string;
 }
+
+export interface AdminItemBasePayload {
+  title: string;
+  author_director?: string;
+  item_type_id: number;
+  purchase_price?: number;
+  rental_price_per_day?: number;
+  total_copies: number;
+}
+
+export type AdminItemCreatePayload = AdminItemBasePayload;
+
+export interface AdminItemUpdatePayload extends Partial<AdminItemBasePayload> {
+  item_id?: number;
+}
