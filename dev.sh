@@ -23,6 +23,12 @@ case "$1" in
     test-auth)
         ./run-admin-test.sh
         ;;
+    restart)
+        echo "Restarting BookShop services..."
+        ./scripts/stop-dev.sh
+        echo "Services stopped. Starting again..."
+        ./scripts/start-dev.sh
+        ;;
     venv)
         ./scripts/activate-venv.sh
         ;;
@@ -30,9 +36,10 @@ case "$1" in
         ./run-python.sh backend/scripts/admin/fix_identity.py
         ;;
     *)
-        echo "Usage: $0 {start|stop|status|items|create|admin|test-auth|venv|fix-ids}"
+        echo "Usage: $0 {start|stop|status|restart|items|create|admin|test-auth|venv|fix-ids}"
         echo "  start     - Start all services"
         echo "  stop      - Stop all services" 
+        echo "  restart   - Stop then start all services"
         echo "  status    - Check service status"
         echo "  items     - List all items"
         echo "  create    - Create a new item"

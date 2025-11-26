@@ -1,8 +1,12 @@
 // Comprehensive debug logger for frontend debugging
+type LogLevel = 'info' | 'warn' | 'error' | 'none';
+type OutputMode = 'console' | 'silent';
+
 class DebugLogger {
   private logs: any[] = [];
   private isEnabled = true;
-  private logLevel: 'info' | 'warn' | 'error' | 'none' = 'info';
+  private logLevel: LogLevel = 'info';
+  private outputMode: OutputMode = 'console';
 
   enable() {
     this.isEnabled = true;
@@ -12,11 +16,19 @@ class DebugLogger {
     this.isEnabled = false;
   }
 
-  setLogLevel(level: 'info' | 'warn' | 'error' | 'none') {
+  setLogLevel(level: LogLevel) {
     this.logLevel = level;
   }
 
-  log(category: string, data: any, level: 'info' | 'warn' | 'error' = 'info') {
+  setOutputMode(mode: OutputMode) {
+    this.outputMode = mode;
+  }
+
+  getOutputMode() {
+    return this.outputMode;
+  }
+
+  log(category: string, data: any, level: Exclude<LogLevel, 'none'> = 'info') {
     if (!this.isEnabled || this.logLevel === 'none') return;
     
     // Filter by log level
@@ -33,17 +45,18 @@ class DebugLogger {
 
     this.logs.push(logEntry);
 
-    // Also log to console for immediate visibility
-    const consoleMessage = `[${timestamp}] ${category}:`;
-    switch (level) {
-      case 'error':
-        console.error(consoleMessage, data);
-        break;
-      case 'warn':
-        console.warn(consoleMessage, data);
-        break;
-      default:
-        console.log(consoleMessage, data);
+    if (this.outputMode === 'console') {
+      const consoleMessage = `[${timestamp}] ${category}:`;
+      switch (level) {
+        case 'error':
+          console.error(consoleMessage, data);
+          break;
+        case 'warn':
+          console.warn(consoleMessage, data);
+          break;
+        default:
+          console.log(consoleMessage, data);
+      }
     }
   }
 
@@ -83,19 +96,52 @@ class DebugLogger {
     return this.logs;
   }
 
-  // Export logs as downloadable file
-  exportLogs() {
-    const dataStr = JSON.stringify(this.logs, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    
+  dumpToConsole(filter?: { level?: Exclude<LogLevel, 'none'>; category?: string }) {
+    console.groupCollapsed('DebugLogger Dump');
+    this.logs.forEach((log) => {
+      if (filter?.level && log.level !== filter.level) return;
+      if (filter?.category && log.category !== filter.category) return;
+      console.group(`[${log.timestamp}] ${log.category} (${log.level})`);
+      console.log(log.data);
+      console.groupEnd();
+    });
+    console.groupEnd();
+  }
+
+  private downloadFile(content: string, mime: string, extension: string) {
+    const dataBlob = new Blob([content], { type: mime });
     const url = URL.createObjectURL(dataBlob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `frontend-debug-${Date.now()}.json`;
+    link.download = `frontend-debug-${Date.now()}.${extension}`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+  }
+
+  exportLogsAsJSON() {
+    const dataStr = JSON.stringify(this.logs, null, 2);
+    this.downloadFile(dataStr, 'application/json', 'json');
+  }
+
+  exportLogsAsTxt() {
+    const textStr = this.logs
+      .map(
+        (log) =>
+          `[${log.timestamp}] ${log.category} (${log.level})\n${JSON.stringify(
+            log.data,
+            null,
+            2,
+          )}`,
+      )
+      .join('\n\n---\n\n');
+    this.downloadFile(textStr, 'text/plain', 'txt');
+  }
+
+  // Legacy helper
+  exportLogs() {
+    this.exportLogsAsJSON();
   }
 
   // Clear logs

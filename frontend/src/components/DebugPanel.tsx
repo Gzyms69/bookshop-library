@@ -4,6 +4,7 @@ import debugLogger from '../utils/debugLogger';
 export const DebugPanel: React.FC = () => {
   const [isVisible, setIsVisible] = React.useState(false);
   const [logs, setLogs] = React.useState<any[]>([]);
+  const [outputMode, setOutputMode] = React.useState(debugLogger.getOutputMode());
 
   const updateLogs = () => {
     setLogs(debugLogger.getLogs());
@@ -32,14 +33,41 @@ export const DebugPanel: React.FC = () => {
 
   return (
     <div className="fixed inset-4 bg-gray-900 bg-opacity-95 z-50 p-4 overflow-auto">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold text-white">Debug Panel</h2>
-        <div className="space-x-2">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-4">
+        <div>
+          <h2 className="text-xl font-bold text-white">Debug Panel</h2>
+          <p className="text-sm text-gray-400">
+            Live output: <span className="font-semibold">{outputMode === 'console' ? 'Console' : 'Silent'}</span>
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
           <button
-            onClick={() => debugLogger.exportLogs()}
+            onClick={() => {
+              const nextMode = outputMode === 'console' ? 'silent' : 'console';
+              debugLogger.setOutputMode(nextMode);
+              setOutputMode(nextMode);
+            }}
+            className="bg-purple-600 text-white px-4 py-2 rounded"
+          >
+            Toggle Live Output
+          </button>
+          <button
+            onClick={() => debugLogger.dumpToConsole()}
+            className="bg-indigo-500 text-white px-4 py-2 rounded"
+          >
+            Dump to Console
+          </button>
+          <button
+            onClick={() => debugLogger.exportLogsAsJSON()}
             className="bg-blue-500 text-white px-4 py-2 rounded"
           >
-            Export Logs
+            Export JSON
+          </button>
+          <button
+            onClick={() => debugLogger.exportLogsAsTxt()}
+            className="bg-teal-500 text-white px-4 py-2 rounded"
+          >
+            Export TXT
           </button>
           <button
             onClick={() => debugLogger.clear()}

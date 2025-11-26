@@ -2,9 +2,11 @@ import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react'
 import { BookIcon, FilterIcon, SearchIcon } from '../components/icons';
 import { ItemGrid } from '../components/ItemGrid';
 import { SearchFilters } from '../components/SearchFilters';
+import { AppNavigation } from '../components/AppNavigation';
 import { Item, getItems } from '../services/api';
 
 const CustomerPanel: React.FC = () => {
+  console.log('🎬 CustomerPanel rendered');
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [items, setItems] = useState<Item[]>([]);
@@ -15,33 +17,63 @@ const CustomerPanel: React.FC = () => {
 
   // Guard against StrictMode double-mount in development
   const didFetchRef = useRef(false);
-
-  useEffect(() => {
-    if (didFetchRef.current) return;
-    didFetchRef.current = true;
-    const controller = new AbortController();
-    fetchItems(controller.signal);
-    return () => {
-      controller.abort();
-    };
-  }, []);
+  const controllerRef = useRef<AbortController | null>(null);
 
   const fetchItems = async (signal?: AbortSignal) => {
     try {
+      console.log('🔍 fetchItems called');
       setLoading(true);
+      console.log('📡 About to call getItems()');
       const data = await getItems(signal);
+      console.log('✅ getItems resolved with:', data);
+      console.log('   Type:', typeof data, 'Is Array:', Array.isArray(data), 'Length:', Array.isArray(data) ? data.length : 'N/A');
+      
       // getItems now guarantees it returns an Item[]
       const itemsArray = Array.isArray(data) ? data : [];
+      console.log('📦 itemsArray prepared:', itemsArray, 'Length:', itemsArray.length);
+      
+      console.log('🎬 Calling setItems with:', itemsArray.length, 'items');
       setItems(itemsArray);
+      console.log('✅ setItems called successfully');
       
     } catch (err: any) {
       // Ignore abort errors during unmount
-      if (err.name === 'AbortError') return;
+      if (err.name === 'AbortError') {
+        console.log('ℹ️ Fetch aborted during unmount');
+        return;
+      }
+      console.error('❌ Error fetching items:', err);
+      console.error('   Error message:', err.message);
+      console.error('   Error stack:', err.stack);
       setError(err.message || 'Failed to load items');
     } finally {
+      console.log('🏁 fetchItems finally block');
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    console.log('🔔 items state changed:', items, 'Length:', items.length);
+  }, [items]);
+
+  useEffect(() => {
+    // Only fetch once
+    if (didFetchRef.current) {
+      console.log('⏭️ Already fetched, skipping');
+      return;
+    }
+    console.log('🎯 First mount - starting fetch');
+    didFetchRef.current = true;
+    
+    // Don't use AbortController - StrictMode cleanup will abort in-flight requests
+    // Just pass undefined signal to let request complete
+    fetchItems();
+    
+    // Empty cleanup - don't abort
+    return () => {
+      console.log('🔌 Component unmounting');
+    };
+  }, []);
 
   // Compute filtered items using useMemo to avoid extra re-renders
   const filteredItems = useMemo(() => {
@@ -122,6 +154,7 @@ const CustomerPanel: React.FC = () => {
   return (
     <main className="min-h-screen w-full flex flex-col items-center p-4 sm:p-6 lg:p-8 bg-dots-pattern">
       <div className="w-full max-w-screen-2xl mx-auto flex flex-col flex-grow">
+        <AppNavigation />
         <header className="text-center mb-10">
           <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-teal-500 pb-2">
             BookShop Library

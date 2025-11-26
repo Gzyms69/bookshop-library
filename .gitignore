@@ -31,3 +31,26 @@ frontend.log
 backend.pid
 frontend.pid
 .requirements_installed
+
+# AI Development Tools & Rules
+.cursorrules
+.clinerules
+.agentrules
+.windsurfrules
+claude_context.md
+agent_notes.md
+conversation_history.json
+ai_conversation_*.md
+ai_*.md
+
+# AI-generated analysis files
+.cursor/
+.windsurf/
+.claude/
+
+# Local environment & credentials (never commit)
+.env
+.env.local
+admin_credentials.json
+*.key
+*.pem

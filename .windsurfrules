@@ -1,25 +1,87 @@
-# Project Overview
-- This is the BookShop Library Management System, a full-stack application.
-- The frontend is built with React and TypeScript. Use functional components with TypeScript interfaces.
-- The backend is a Python FastAPI server.
-- We use Tailwind CSS for all styling on the frontend.
+# BookShop Library Development Guide
 
-# Project Structure & Architecture
-- Frontend source code is located in the `frontend/src/` directory.
-- Key React components are in `frontend/src/pages/` (like CustomerPanel) and `frontend/src/components/`.
-- Backend application logic is in the `backend/app/` directory.
-- Database schema and scripts are in the `database/` directory.
+## Quick Start
+- **Start services**: `./dev.sh start` (SQL Server + Backend + Frontend)
+- **Check status**: `./dev.sh status`
+- **Stop services**: `./dev.sh stop`
+- **API docs**: http://localhost:8000/docs (Swagger UI)
+- **Frontend**: http://localhost:3000
 
-# Styling & UI Conventions
-- Use Tailwind CSS for all styling. Follow the existing dark theme pattern.
-- Prefer responsive design utilities from Tailwind (e.g., `flex`, `grid`, `md:` prefixes).
+## Architecture
+- **Frontend**: React 18 + TypeScript in `frontend/src/`
+- **Backend**: FastAPI + pymssql in `backend/app/main.py`
+- **Database**: MS SQL Server 2022 in Docker, connects on `localhost:1433`
 
-# Data Fetching & State
-- The frontend uses native Fetch API for calls to `http://localhost:8000`.
-- Follow the data fetching patterns found in `CustomerPanel.tsx` and `services/api.ts`.
+## Critical Implementation Patterns
 
-# General Code Style
-- Use TypeScript for all frontend code. Avoid `any`; use explicit types.
-- Use descriptive variable names (e.g., `isLoading`, `searchTerm`).
-- Use named exports for React components and utility functions.
-- For Python backend code, use type hints and follow PEP8.
+### React Components (frontend/src/)
+- **Always use functional components** with hooks (no class components)
+- **Always wrap component exports with `React.memo()`** to prevent unnecessary re-renders
+- **Use `useRef` to guard against StrictMode double-mounts**: 
+  ```tsx
+  const didFetchRef = useRef(false);
+  useEffect(() => {
+    if (didFetchRef.current) return;
+    didFetchRef.current = true;
+    // ... fetch logic
+  }, []);
+  ```
+- **Use `useMemo()` for derived/filtered state** instead of computing in separate effects
+- **Use `AbortController` for fetch cleanup on unmount** to prevent memory leaks
+
+### API Service (frontend/src/services/api.ts)
+- **Deduplication**: `getItems()` maintains `inflightGetItems` to reuse concurrent requests
+- **Caching**: `cachedItems` stores last fetch; clear with `clearItemsCache()`
+- **Logging**: Every API call logged via `debugLogger.logApiCall()` with source: 'network'|'cache'|'inflight'
+- **AbortSignal support**: All fetch functions accept optional `signal` parameter
+
+### FastAPI Endpoints (backend/app/main.py)
+- **Always return JSON** with structure `{"items": [...], "count": N}`
+- **Always JOIN ItemTypes table** to include `type_name` in responses
+- **Use `Optional[str]` for query parameters**: `get_items(item_type: Optional[str] = None)`
+- **Handle errors as HTTPException(status_code=500, detail=str(e))`**
+
+### Database (backend/scripts/admin/)
+- **Use `pymssql.connect()` for connections** with hardcoded credentials (dev only)
+- **Always close connections in `finally` block**
+- **Convert cursor results to dicts**: `dict(zip(columns, row))`
+
+## TypeScript Guidelines
+- Avoid `any`; use explicit types or interfaces
+- Export types from `frontend/src/types/index.ts` for shared use
+- Use `Item` interface for all item-related code
+- Descriptive names: `isLoading`, `searchTerm`, `filteredItems` (not `x`, `temp`, `d`)
+
+## Tailwind CSS Rules
+- Use Tailwind utilities only (no inline styles or CSS-in-JS)
+- Follow the existing dark theme pattern (see `ItemCard.tsx` as reference)
+- Use responsive utilities: `flex flex-col md:flex-row gap-4`
+
+## Common Issues & Solutions
+
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Duplicate API calls | React StrictMode + concurrent fetches | Use `didFetchRef` guard + `inflightGetItems` dedup |
+| Multiple re-renders | Derived state stored separately | Use `useMemo()` instead of `useState` + effect |
+| Memory leaks | Unmounted components still updating | Use `AbortController` + cleanup functions |
+| Stale closures | Old dependencies in effects | Check useEffect/useCallback dependencies |
+
+## File Navigation
+- Main page: `frontend/src/pages/CustomerPanel.tsx`
+- Item display: `frontend/src/components/ItemCard.tsx`, `ItemGrid.tsx`
+- API layer: `frontend/src/services/api.ts`
+- Backend API: `backend/app/main.py`
+- Admin tools: `backend/scripts/admin/`
+- Schema: `database/schema.sql`
+
+## When Adding Features
+1. **New endpoint**: Add to `backend/app/main.py`, join ItemTypes, return JSON
+2. **New component**: Use functional + `React.memo()`, add TypeScript interface
+3. **New fetch**: Update `frontend/src/services/api.ts`, follow dedup pattern
+4. **Database change**: Update `database/schema.sql`, test with `./run-admin-test.sh`
+
+## Development Notes
+- **CORS hardcoded to `http://localhost:3000`** — update for production
+- **DB credentials hardcoded** — use `.env` for production
+- **Cache is session-only** — refreshes on page reload
+- **Windows/WSL**: Run bash scripts from WSL terminal or Git Bash

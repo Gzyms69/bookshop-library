@@ -51,35 +51,65 @@ export const clearItemsCache = () => {
  * @returns Promise<Item[]>
  */
 export const getItems = async (signal?: AbortSignal): Promise<Item[]> => {
+  console.log('📞 getItems() called');
+  
   // Return cached items immediately if present
   if (cachedItems) {
+    console.log('💾 Returning cached items');
     debugLogger.logApiCall(`${API_BASE}/items`, 'GET', null, { source: 'cache' });
     return Promise.resolve(cachedItems);
   }
 
   // If there's an inflight request, reuse it
   if (inflightGetItems) {
+    console.log('🔄 Reusing inflight request');
     debugLogger.logApiCall(`${API_BASE}/items`, 'GET', null, { source: 'inflight' });
     return inflightGetItems;
   }
 
+  console.log('🚀 Starting new fetch to ' + API_BASE + '/items');
+  
   // Otherwise, start a new fetch and save the inflight promise
   inflightGetItems = (async () => {
     try {
-      debugLogger.logApiCall(`${API_BASE}/items`, 'GET', null, { source: 'network' });
+      console.log('⏳ Fetching...');
       const response = await fetch(`${API_BASE}/items`, { signal });
+      console.log('📨 Fetch completed, status:', response.status, 'ok:', response.ok);
+      
       if (!response.ok) {
-        throw new Error('Failed to fetch items');
+        throw new Error('Failed to fetch items, status: ' + response.status);
       }
+      
+      console.log('📖 Parsing JSON...');
       const data = await response.json();
-      cachedItems = data;
-      return data;
+      console.log('✅ JSON parsed, Raw API response:', data);
+      
+      // Backend returns { items: [...], count: N }, extract items array
+      const itemsArray = Array.isArray(data) ? data : (data.items || []);
+      console.log('📦 Extracted items array:', itemsArray, 'Length:', itemsArray.length);
+      
+      // Log AFTER we have the actual data
+      debugLogger.logApiCall(`${API_BASE}/items`, 'GET', null, { 
+        source: 'network', 
+        itemsCount: itemsArray.length,
+        response: itemsArray 
+      });
+      
+      cachedItems = itemsArray;
+      console.log('💾 Cached items, returning:', itemsArray.length, 'items');
+      return itemsArray;
+    } catch (err) {
+      console.error('❌ Error in getItems promise:', err);
+      debugLogger.log('API_ERROR', { url: API_BASE + '/items', error: String(err) }, 'error');
+      throw err;
     } finally {
       // Clean up the inflight marker once resolved/rejected
+      console.log('🧹 Cleaning up inflight marker');
       inflightGetItems = null;
     }
   })();
 
+  console.log('↩️ Returning inflight promise');
   return inflightGetItems;
 };
 

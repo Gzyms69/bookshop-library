@@ -80,9 +80,16 @@ cd bookshop-library
 
 ### 3. Access the Application
 - **Frontend**: http://localhost:3000
+- **Admin Panel**: http://localhost:3000/admin
 - **Backend API**: http://localhost:8000
 - **API Documentation**: http://localhost:8000/docs
 - **Database**: localhost:1433 (SQL Server)
+
+### Routes
+- `/` &mdash; Customer experience (`CustomerPanel`) with catalog browsing.
+- `/admin` &mdash; New admin control center scaffold, sharing the same visual system.
+
+A pill-style navigation control is rendered on both panels so you can switch views without editing code.
 
 ## 📁 Project Structure
 
