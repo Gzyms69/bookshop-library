@@ -20,6 +20,7 @@ yarn-error.log*
 # IDE
 .vscode/
 .idea/
+*.code-workspace
 
 # OS
 .DS_Store

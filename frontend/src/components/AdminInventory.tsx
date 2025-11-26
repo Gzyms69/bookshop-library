@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import type { Item } from '../types';
+import type { Item, AdminItemCreatePayload } from '../types';
 import { getAdminItems } from '../services/api';
+import { ItemForm } from './ItemForm';
 import debugLogger from '../utils/debugLogger';
 
 const MOCK_ITEMS: Item[] = [
@@ -28,6 +29,7 @@ const MOCK_ITEMS: Item[] = [
 
 export const AdminInventory: React.FC = () => {
   const [items, setItems] = useState<Item[]>(MOCK_ITEMS);
+  const [showForm, setShowForm] = useState(false);
 
   const handleRefresh = async () => {
     try {
@@ -56,6 +58,18 @@ export const AdminInventory: React.FC = () => {
     setItems((prev) => [...prev, newItem]);
   };
 
+  const handleFormSubmit = (payload: AdminItemCreatePayload) => {
+    const nextId = (items[items.length - 1]?.item_id ?? 0) + 1;
+    const newItem: Item = {
+      item_id: nextId,
+      ...payload,
+      available_copies: payload.total_copies,
+    };
+    debugLogger.log('ADMIN_INVENTORY:create_from_form', { newItem });
+    setItems((prev) => [...prev, newItem]);
+    setShowForm(false);
+  };
+
   const handleMockDelete = (id: number) => {
     debugLogger.log('ADMIN_INVENTORY:delete_mock', { id });
     setItems((prev) => prev.filter((i) => i.item_id !== id));
@@ -71,7 +85,14 @@ export const AdminInventory: React.FC = () => {
   };
 
   return (
-    <section className="bg-gray-800/70 border border-gray-700 rounded-2xl p-6 flex flex-col gap-4">
+    <section className="flex flex-col gap-4">
+      {showForm && (
+        <ItemForm
+          onSubmit={handleFormSubmit}
+          onCancel={() => setShowForm(false)}
+        />
+      )}
+      <section className="bg-gray-800/70 border border-gray-700 rounded-2xl p-6 flex flex-col gap-4">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-sm text-gray-400 mb-1 uppercase tracking-wide">
@@ -94,10 +115,17 @@ export const AdminInventory: React.FC = () => {
           </button>
           <button
             type="button"
-            onClick={handleMockCreate}
+            onClick={() => setShowForm(!showForm)}
             className="px-3 py-1.5 rounded-lg text-xs font-medium bg-green-600 text-white hover:bg-green-700"
           >
-            Add Mock Item
+            {showForm ? 'Cancel' : 'Add Item'}
+          </button>
+          <button
+            type="button"
+            onClick={handleMockCreate}
+            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-700 text-gray-100 hover:bg-gray-600"
+          >
+            Quick Mock
           </button>
         </div>
       </div>
@@ -177,6 +205,7 @@ export const AdminInventory: React.FC = () => {
       </div>
 
       {/* TODO: replace mock behavior with real getAdminItems/createItem/updateItem/deleteItem calls when backend admin endpoints are ready */}
+      </section>
     </section>
   );
 };
