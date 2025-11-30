@@ -199,52 +199,14 @@ else
     echo "💡 To activate later: cd backend && source venv/bin/activate"
 fi
 
-echo "📝 Creating convenience scripts..."
-cat > ./run-python.sh << 'EOF'
-#!/bin/bash
-if [ -f "backend/venv/bin/python" ]; then
-    backend/venv/bin/python "$@"
-else
-    echo "❌ Virtual environment not found. Run ./scripts/start-dev.sh first."
-    exit 1
-fi
-EOF
-
-cat > ./run-admin-test.sh << 'EOF'
-#!/bin/bash
-./run-python.sh backend/scripts/test_auth_and_db.py
-EOF
-
-cat > ./run-admin-panel.sh << 'EOF'
-#!/bin/bash  
-./run-python.sh backend/scripts/admin_panel.py
-EOF
-
-cat > ./run-item-creation.sh << 'EOF'
-#!/bin/bash
-./run-python.sh backend/scripts/admin/item_creation.py
-EOF
-
-cat > ./run-item-listing.sh << 'EOF'
-#!/bin/bash
-./run-python.sh backend/scripts/admin/item_listing.py
-EOF
-
-chmod +x ./run-python.sh ./run-admin-test.sh ./run-admin-panel.sh ./run-item-creation.sh ./run-item-listing.sh
-
-echo "✅ Created convenience scripts:"
-echo "   ./run-admin-test.sh    - Test authentication"
-echo "   ./run-admin-panel.sh   - Run admin panel"
-echo "   ./run-item-creation.sh - Create new items"
-echo "   ./run-item-listing.sh  - List all items"
-
 echo ""
 echo "🎯 Quick Commands:"
-echo "   ./scripts/stop-dev.sh    - Stop all services"
-echo "   ./scripts/status.sh      - Check service status"
-echo "   ./run-admin-test.sh      - Test authentication"
-echo "   ./run-item-listing.sh    - List all items"
-echo "   ./run-item-creation.sh   - Create new item"
+echo "   ./dev.sh stop            - Stop all services"
+echo "   ./dev.sh status          - Check service status"
+echo "   ./dev.sh test-auth       - Test authentication"
+echo "   ./dev.sh items           - List all items"
+echo "   ./dev.sh create          - Create new item"
+echo "   ./dev.sh admin           - Run admin panel"
 
 echo ""
 echo "🎉 Development environment started successfully!"

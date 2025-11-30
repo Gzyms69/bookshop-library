@@ -12,16 +12,16 @@ case "$1" in
         ./scripts/status.sh
         ;;
     items)
-        ./run-item-listing.sh
+        ./scripts/run-item-listing.sh
         ;;
     create)
-        ./run-item-creation.sh
+        ./scripts/run-item-creation.sh
         ;;
     admin)
-        ./run-admin-panel.sh
+        ./scripts/run-admin-panel.sh
         ;;
     test-auth)
-        ./run-admin-test.sh
+        ./scripts/run-admin-test.sh
         ;;
     restart)
         echo "Restarting BookShop services..."
@@ -33,7 +33,7 @@ case "$1" in
         ./scripts/activate-venv.sh
         ;;
     fix-ids)
-        ./run-python.sh backend/scripts/admin/fix_identity.py
+        ./scripts/run-python.sh backend/scripts/admin/fix_identity.py
         ;;
     *)
         echo "Usage: $0 {start|stop|status|restart|items|create|admin|test-auth|venv|fix-ids}"
